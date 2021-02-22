@@ -74,7 +74,7 @@
           $output.innerHTML = ''
 
           $output.innerHTML = sliceList.map((row, index) => {
-            return `<div class="row"><label class="title">拆分第 ${index + 1}批数据：</label><button class="copy-data" data-index=${index}>拷贝数据</button><textarea class="data">${row.join(',')}</textarea></div>`
+            return `<div class="row"><label class="title">拆分第 ${index + 1} 批数据：</label><button class="copy-data" data-index=${index}>拷贝数据</button><textarea class="data">${row.join(',')}</textarea></div>`
           }).join('')
           // console.log(sliceList)
         })
