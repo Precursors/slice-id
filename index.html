@@ -1,0 +1,94 @@
+<html>
+  <head>
+    <title>ID 分割</title>
+    <style>
+      .form {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .form div {
+        display: flex;
+        margin: 10px 0;
+      }
+
+      .row {
+        display: flex;
+        margin: 10px 0;
+        align-items: center;
+      }
+
+      .row .title {
+        width: 200px;
+      }
+
+      .row .copy-data {
+        width: 80px;
+        margin: 0 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <form class="form" action="#">
+      <div>
+        <label>分割数量：</label><input id="slice-count" value="200" />
+      </div>
+      <div>
+        <label>原始数据：</label>
+        <textarea id="content"></textarea>
+      </div>
+      <div>
+        <button id="run">分割</button>
+      </div>
+    </form>
+    <div id="output"></div>
+    <script>
+      window.addEventListener('load', function () {
+        const $sliceCount = document.querySelector('#slice-count')
+        const $content = document.querySelector('#content')
+        const $run = document.querySelector('#run')
+        const $output = document.querySelector('#output')
+
+        let globalData = []
+
+        $run.addEventListener('click', function () {
+          const sliceCount = Number($sliceCount.value) || 200
+          const content = String($content.value)
+
+          console.log(content, sliceCount)
+
+          if (!content) {
+            return alert('无法读取原始数据')
+          }
+
+          const data = content.replace(/\n/gm, ',').replace(/,$/, '').split(/,+/gm)
+
+          const sliceList = []
+
+          for (let index = 0, cursor = 0; index < data.length; index += sliceCount, cursor += 1) {
+            sliceList.push(data.slice(cursor * sliceCount, (cursor + 1) * sliceCount))
+          }
+
+          globalData = sliceList
+
+          $output.innerHTML = ''
+
+          $output.innerHTML = sliceList.map((row, index) => {
+            return `<div class="row"><label class="title">拆分第 ${index + 1}批数据：</label><button class="copy-data" data-index=${index}>拷贝数据</button><textarea class="data">${row.join(',')}</textarea></div>`
+          }).join('')
+          // console.log(sliceList)
+        })
+
+        $output.addEventListener('click', function (target) {
+          const $dom = target.target
+          if ($dom.classList.contains('copy-data')) {
+            const index = $dom.dataset.index
+            if (globalData[index]) {
+              navigator.clipboard.writeText(globalData[index]).then(() => { alert(`Copied!`) }).catch((error) => { alert(`Copy failed! ${error}`) })
+            }
+          }
+        })
+      })
+    </script>
+  </body>
+</html>
